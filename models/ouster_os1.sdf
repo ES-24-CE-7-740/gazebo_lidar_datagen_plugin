@@ -23,7 +23,6 @@
       <frame name="lidar_frame" attached_to="base">
         <pose> 0 0 0 0 0 0 </pose>
       </frame>
-
       <sensor name="gpu_lidar" type="gpu_lidar">
         <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
         <topic>scan</topic>
@@ -53,12 +52,17 @@
             <mean>0.0</mean>
             <stddev>0.01</stddev>
           </noise>
-          <!-- <visibility_mask>1</visibility_mask> -->
         </ray>
         <always_on>1</always_on>
         <visualize>true</visualize>
-      </sensor>
-    </link>
-  </model>
+        </sensor>
 
+
+      </link>
+          <plugin 
+        filename="librandom_mover.so"
+        name="lidar_sim::random_mover">
+        <move_group>tracker</move_group>
+      </plugin>
+  </model>
 </sdf>

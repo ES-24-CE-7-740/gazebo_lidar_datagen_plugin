@@ -55,12 +55,26 @@
           </geometry>
         </collision>
         <visual name="visual">
-          <!-- <visibility_flags>1</visibility_flags> -->
           <geometry>
             <plane>
               <normal>0 0 1</normal>
               <size>100 100</size>
             </plane>
+          </geometry>
+           <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+      <link name="scene_link">
+        <visual name="scene_visual">
+          <geometry>
+            <mesh>
+              <uri>models://meshes/ground_mesh2.dae</uri>
+              <scale> 1 1 2 </scale>
+            </mesh>
           </geometry>
           <material>
             <ambient>0.8 0.8 0.8 1</ambient>

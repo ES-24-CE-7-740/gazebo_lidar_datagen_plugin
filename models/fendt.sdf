@@ -6,7 +6,6 @@
       <pose relative_to="__model__"> 0 0 0 0 0 0 </pose>
       <visual name="fendt_visual">
         <laser_retro>255</laser_retro>
-        <!-- <visibility_flags>1</visibility_flags> -->
         <geometry>
          <mesh>
             <uri>models://meshes/fendt.dae</uri>
@@ -23,6 +22,7 @@
     <plugin
       filename="librandom_mover.so"
       name="lidar_sim::random_mover">
+      <move_group>target</move_group>
     </plugin>
   </model>
 </sdf>

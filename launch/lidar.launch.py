@@ -64,6 +64,29 @@ def randomize_pose_for_lidar():
     
     return pose
 
+
+
+def spawn_multiple(fname, base_name, n_units):
+    tree = xmlET.parse(fname)
+    root = tree.getroot()
+    model = root.find(".//model")
+    
+    spawners = []
+
+    for n in range(n_units):
+        model.attrib['name'] = f"{base_name}_{n}"
+        tree.write(f"/tmp/{base_name}_{n}n.sdf")
+
+        spawner = Node(package='ros_gz_sim',
+                       executable='create',
+                       name=f"spawn_{base_name}_{n}",
+                       arguments=['-name', f"{base_name}_{n}", '-file', f"/tmp/{base_name}_{n}n.sdf"])
+        spawners.append(spawner)
+
+    return spawners
+    
+
+
     
 def generate_launch_description():
     lidar_sim_dir = get_package_share_directory("lidar_sim")
@@ -94,6 +117,12 @@ def generate_launch_description():
                                name='spawn_fendt',
                                arguments=['-name', "fendt", '-file', fendt_sdf_path],
                                output='screen')
+
+
+    fendt_spawners = spawn_multiple(fendt_sdf_path, "fendt", 3)
+
+
+
 
     lidar_bridge = Node(package='ros_gz_bridge',
                         executable = 'parameter_bridge',
@@ -133,7 +162,7 @@ def generate_launch_description():
                                   "world",
                                   lidar_model+"/lidar_link/gpu_lidar" 
                                 ])
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, spawn_fendt])
+    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, spawn_fendt] + fendt_spawners)
 
 
 if __name__ == "__main__":
@@ -141,4 +170,4 @@ if __name__ == "__main__":
     
     sdf_path = os.path.join(lidae_sim_dir,"models","fendt.sdf")
 
-    set_sdf_pose(sdf_path, randomize_pose_for_class(5,10))
+    spawn_multiple(sdf_path, "fendt", 3)
