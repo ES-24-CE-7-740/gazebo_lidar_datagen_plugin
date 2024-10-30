@@ -119,9 +119,13 @@ def generate_launch_description():
                                output='screen')
 
 
-    fendt_spawners = spawn_multiple(fendt_sdf_path, "fendt", 3)
+    target_spawners = []
 
+    targets_sdf_paths = os.path.join(lidar_sim_dir, "models", "targets")
 
+    for target_sdf_path in os.listdir(targets_sdf_paths):
+        target_spawners = target_spawners + spawn_multiple(os.path.join(targets_sdf_paths,target_sdf_path), target_sdf_path.split(".")[0], 2)
+    
 
 
     lidar_bridge = Node(package='ros_gz_bridge',
@@ -133,22 +137,6 @@ def generate_launch_description():
 
 
 
-
-    # lidar_static_transform = Node(package='tf2_ros',
-    #                               executable = 'static_transform_publisher',
-    #                               name='lidar_tf_pub',
-    #                               arguments= [
-    #                               f"{lidar_pose['x']}", 
-    #                               f"{lidar_pose['y']}", 
-    #                               f"{lidar_pose['z']}", 
-    #                               f"{lidar_pose['roll']}", 
-    #                               f"{lidar_pose['pitch']}", 
-    #                               f"{lidar_pose['yaw']}",
-    #                               "world",
-    #                               lidar_model+"/base/gpu_lidar"
-    #
-    #                     
-    #                             ])
     lidar_static_transform = Node(package='tf2_ros',
                                   executable = 'static_transform_publisher',
                                   name='lidar_tf_pub',
@@ -162,7 +150,7 @@ def generate_launch_description():
                                   "world",
                                   lidar_model+"/lidar_link/gpu_lidar" 
                                 ])
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, spawn_fendt] + fendt_spawners)
+    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform] + target_spawners)
 
 
 if __name__ == "__main__":

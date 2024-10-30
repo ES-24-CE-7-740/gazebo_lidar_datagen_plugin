@@ -10,14 +10,40 @@
 
 namespace lidar_sim
 {
+
+class PoseStorage{
+public:
+  static PoseStorage& Instance() {
+    static PoseStorage instance;
+    return instance;
+  }
+  
+  std::vector<gz::math::Pose3d>& get_poses(){
+    return poses;
+  }
+
+  void clear_poses(){
+    poses.clear();
+  }
+private:
+  PoseStorage() = default;
+  ~PoseStorage() = default;
+
+  PoseStorage(const PoseStorage&) = delete;
+  PoseStorage& operator=(const PoseStorage&) = delete;
+
+  std::vector<gz::math::Pose3d> poses; 
+
+};
+
   // This is the main plugin's class. It must inherit from System and at least
   // one other interface.
   // Here we use `ISystemPostUpdate`, which is used to get results after
   // physics runs. The opposite of that, `ISystemPreUpdate`, would be used by
 // plugins that want to send commands.
-class random_mover_private;
+class RandomMoverPrivate;
 
-class random_mover:
+class RandomMover:
     // This class is a system.
     public gz::sim::System,
     // This class also implements the ISystemPreUpdate, ISystemUpdate,
@@ -27,11 +53,11 @@ class random_mover:
     public gz::sim::ISystemUpdate,
     public gz::sim::ISystemPostUpdate
   {
-    public: random_mover();
+    public: RandomMover();
  
-    public: ~random_mover() override;
+    public: ~RandomMover() override;
 
-    public: std::vector<gz::math::Pose3d> generate_random_target_poses(double min_dist, double max_dist, int n_poses); 
+    public: std::vector<gz::math::Pose3d> generate_random_target_poses(double min_dist, double max_dist, int n_poses, double visible_threshold); 
     public: gz::math::Pose3d generate_random_tracker_pose(double min_z, double max_z, double max_roll, double max_pitch);
     public: void Configure(const gz::sim::Entity &_entity,
                            const std::shared_ptr<const sdf::Element> &_sdf,
@@ -47,7 +73,7 @@ class random_mover:
     public: void PostUpdate(const gz::sim::UpdateInfo &_info,
                 const gz::sim::EntityComponentManager &_ecm) override;
     
-    private: std::unique_ptr<random_mover_private> data_ptr;
+    private: std::unique_ptr<RandomMoverPrivate> data_ptr;
   };
 }
 #endif
