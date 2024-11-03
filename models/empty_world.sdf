@@ -26,10 +26,10 @@
 
     <!-- test custom plugin  -->
 
-    <plugin
-      filename="librandom_mover.so"
-      name="lidar_sim::random_mover">
-    </plugin>
+    <!-- <plugin -->
+    <!--   filename="librandom_mover.so" -->
+    <!--   name="lidar_sim::random_mover"> -->
+    <!-- </plugin> -->
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>

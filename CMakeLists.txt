@@ -35,21 +35,29 @@ set(GZ_SIM_VER ${ignition-gazebo6_VERSION_MAJOR})
 
 add_library(random_mover SHARED src/random_mover.cc)
 
+add_library(joint_random_mover SHARED src/joint_random_mover.cc)
 
 target_include_directories(
   random_mover PRIVATE include
 )
 
-set_property(TARGET random_mover PROPERTY CXX_STANDARD 17)
+target_include_directories(
+  joint_random_mover PRIVATE include
+)
+set_property(TARGET random_mover joint_random_mover PROPERTY CXX_STANDARD 17)
 
-target_link_libraries(random_mover
+target_link_libraries(random_mover 
   ignition-plugin${IGN_PLUGIN_VER}::ignition-plugin${IGN_PLUGIN_VER}
   ignition-common${IGN_COMMON_VER}::ignition-common${IGN_COMMON_VER}
   ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER})
 
 
+target_link_libraries(joint_random_mover 
+  ignition-plugin${IGN_PLUGIN_VER}::ignition-plugin${IGN_PLUGIN_VER}
+  ignition-common${IGN_COMMON_VER}::ignition-common${IGN_COMMON_VER}
+  ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER})
 install(
-  TARGETS random_mover
+  TARGETS random_mover joint_random_mover
   DESTINATION $ENV{HOME}/.ignition/gazebo/plugins
 )
 

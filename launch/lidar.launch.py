@@ -14,55 +14,55 @@ import xml.etree.ElementTree as xmlET
 import random 
 import numpy as np
 
-def set_sdf_pose(sdf_path, pose_dict):
-    tree = xmlET.parse(sdf_path)
-    root = tree.getroot()
-    pose = root.find(".//link/pose")
-
-    print(pose.text)
-    new_pose = f"{pose_dict['x']} {pose_dict['y']} {pose_dict['z']} {pose_dict['roll']} {pose_dict['pitch']} {pose_dict['yaw']}"
-    
-    pose.text = new_pose
-    
-    print(pose.text)
-
-    sdf_fname = os.path.basename(sdf_path)
-
-    tmp_file_path = os.path.join("/tmp/",sdf_fname)
-    
-    tree.write(tmp_file_path)
-    
-    return tmp_file_path
-
-
-
-def randomize_pose_for_class(inner_r, outer_r):
-    dist = random.uniform(inner_r, outer_r)
-    theta = random.uniform(0, np.pi*2)
-    
-    pose = {}
-        
-    pose['x'] = dist * np.cos(theta)
-    pose['y'] = dist * np.sin(theta)
-    pose['z'] = random.uniform(-0.1, 0.1)
-
-    pose['yaw'] = random.uniform(0, np.pi*2)
-    pose['roll'] = random.uniform(-0.01, 0.01)
-    pose['pitch'] = random.uniform(-0.01, 0.01)
-
-    return pose
-    
-def randomize_pose_for_lidar():
-    pose = {}
-    pose['x'] = random.uniform(-0.5, 0.5)
-    pose['y'] = random.uniform(-0.5, 0.5)
-    pose['z'] = random.uniform(0.5, 2.0)
-
-    pose['yaw'] = random.uniform(-0.2,0.2)
-    pose['roll'] = random.uniform(-0.2,0.2)
-    pose['pitch'] = random.uniform(-0.2,0.2)
-    
-    return pose
+# def set_sdf_pose(sdf_path, pose_dict):
+#     tree = xmlET.parse(sdf_path)
+#     root = tree.getroot()
+#     pose = root.find(".//link/pose")
+#
+#     print(pose.text)
+#     new_pose = f"{pose_dict['x']} {pose_dict['y']} {pose_dict['z']} {pose_dict['roll']} {pose_dict['pitch']} {pose_dict['yaw']}"
+#     
+#     pose.text = new_pose
+#     
+#     print(pose.text)
+#
+#     sdf_fname = os.path.basename(sdf_path)
+#
+#     tmp_file_path = os.path.join("/tmp/",sdf_fname)
+#     
+#     tree.write(tmp_file_path)
+#     
+#     return tmp_file_path
+#
+#
+#
+# def randomize_pose_for_class(inner_r, outer_r):
+#     dist = random.uniform(inner_r, outer_r)
+#     theta = random.uniform(0, np.pi*2)
+#     
+#     pose = {}
+#         
+#     pose['x'] = dist * np.cos(theta)
+#     pose['y'] = dist * np.sin(theta)
+#     pose['z'] = random.uniform(-0.1, 0.1)
+#
+#     pose['yaw'] = random.uniform(0, np.pi*2)
+#     pose['roll'] = random.uniform(-0.01, 0.01)
+#     pose['pitch'] = random.uniform(-0.01, 0.01)
+#
+#     return pose
+#     
+# def randomize_pose_for_lidar():
+#     pose = {}
+#     pose['x'] = random.uniform(-0.5, 0.5)
+#     pose['y'] = random.uniform(-0.5, 0.5)
+#     pose['z'] = random.uniform(0.5, 2.0)
+#
+#     pose['yaw'] = random.uniform(-0.2,0.2)
+#     pose['roll'] = random.uniform(-0.2,0.2)
+#     pose['pitch'] = random.uniform(-0.2,0.2)
+#     
+#     return pose
 
 
 
