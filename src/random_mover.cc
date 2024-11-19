@@ -194,7 +194,7 @@ void RandomMover::Update(const gz::sim::UpdateInfo &_info,
   );
 
 
-  auto target_poses_vec = generate_random_target_poses(5, 20, 1, 0.5);
+  auto target_poses_vec = generate_random_target_poses(7, 20, 1, 0.5);
 
 
   gz::sim::Entity model_entity = gz::sim::kNullEntity; 

@@ -5,7 +5,7 @@
     <link name="base">
       <pose relative_to="__model__"> 0 0 0 0 0 0 </pose>
       <visual name="fendt_visual">
-        <laser_retro>255</laser_retro>
+        <laser_retro>1</laser_retro>
         <geometry>
          <mesh>
             <uri>models://meshes/fendt_split/body.dae</uri>
@@ -28,7 +28,7 @@
     <link name="left_wheel">
       <pose relative_to="__model__"> 0 0 0 0 0 0 </pose>
       <visual name="fendt_left_wheel_visual">
-        <laser_retro>255</laser_retro>
+        <laser_retro>1</laser_retro>
         <geometry>
          <mesh>
             <uri>models://meshes/fendt_split/left_front_wheel.dae</uri>
@@ -45,7 +45,7 @@
     <link name="right_wheel">
       <pose relative_to="__model__"> 0 0 0 0 0 0 </pose>
       <visual name="fendt_right_wheel_visual">
-        <laser_retro>255</laser_retro>
+        <laser_retro>1</laser_retro>
         <geometry>
          <mesh>
             <uri>models://meshes/fendt_split/right_front_wheel.dae</uri>
@@ -62,7 +62,7 @@
     <link name="forks">
       <pose relative_to="__model__"> 0 0 0 0 0 0 </pose>
       <visual name="fendt_forks_visual">
-        <laser_retro>255</laser_retro>
+        <laser_retro>1</laser_retro>
         <geometry>
          <mesh>
             <uri>models://meshes/fendt_split/forks.dae</uri>
@@ -112,7 +112,7 @@
       <axis>
         <xyz expesses_in="__model__">0 1 0</xyz>
         <limit>
-          <lower>0</lower>
+          <lower>-1</lower>
           <upper>1</upper>
         </limit>
       </axis>
@@ -131,6 +131,12 @@
       <joint_name>left_wheel_joint</joint_name>
       <joint_name>right_wheel_joint</joint_name>
       <joint_move_group>front_wheels</joint_move_group>
+    </plugin>
+
+    <plugin
+      filename="librandom_mover.so"
+      name="lidar_sim::random_mover">
+      <move_group>target</move_group>
     </plugin>
   </model>
 </sdf>
