@@ -1,3 +1,4 @@
+
 import os
 
 from ament_index_python.packages import get_package_share_directory, re
@@ -70,10 +71,10 @@ def generate_launch_description():
 
     target_spawners = []
 
-    targets_sdf_paths = os.path.join(lidar_sim_dir, "models", "targets")
+    targets_sdf_paths = os.path.join(lidar_sim_dir, "models", "ground")
 
     for target_sdf_path in os.listdir(targets_sdf_paths):
-        target_spawners = target_spawners + spawn_multiple(os.path.join(targets_sdf_paths,target_sdf_path), target_sdf_path.split(".")[0], 2)
+        target_spawners = target_spawners + spawn_multiple(os.path.join(targets_sdf_paths,target_sdf_path), target_sdf_path.split(".")[0], 20)
     
 
 
@@ -99,7 +100,10 @@ def generate_launch_description():
                                   "world",
                                   lidar_model+"/lidar_link/gpu_lidar" 
                                 ])
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform] + target_spawners)
+    return LaunchDescription([gz_sim, 
+                              # spawn_lidar, 
+                              # lidar_bridge, 
+                              lidar_static_transform] + target_spawners)
 
 
 if __name__ == "__main__":

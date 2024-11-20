@@ -55,6 +55,7 @@
           </geometry>
         </collision>
         <visual name="visual">
+          <laser_retro>0</laser_retro>
           <geometry>
             <plane>
               <normal>0 0 1</normal>
@@ -70,6 +71,7 @@
       </link>
       <link name="scene_link">
         <visual name="scene_visual">
+          <laser_retro>0</laser_retro>
           <geometry>
             <mesh>
               <uri>models://meshes/ground_mesh2.dae</uri>
