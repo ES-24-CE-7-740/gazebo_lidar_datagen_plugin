@@ -1,2 +1,3 @@
-**/*.dae
+# morty smells
+**/*.dae 
 models/meshes/*
