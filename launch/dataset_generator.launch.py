@@ -15,6 +15,7 @@ import random
 import numpy as np
 import json
 
+from base_objects import BaseSimAsset
 
 
 #########################################################
@@ -22,24 +23,25 @@ import json
 #########################################################
 
 # must match the sdf file names 
-selected_targets = ["fendt",
-                    "fendt_combine",
-                    "valtra",
-                    "valtra_2_simplified"]
 
-target_copies = 3
+target_copies = 1
 
-dataset_size = 1000
+dataset_size = 100
 
 # must have matching sdf file
 lidar_type = "ouster_os1"
 
-dataset_global_path = "/tmp/02"
+dataset_global_path = "/tmp/00"
 
 # this might be usefull later
-label_dict = {'0':'none',
+label_dict = {'0':'ground',
               '1':'tractor',
               '2':'combine_harvester'}
+
+
+ground_mesh_path = "/home/a/personal/sem7/3d_gauss/datasets/meshes/simulation_assets/ground_slices/"
+tractor_mesh_path = "/home/a/personal/sem7/3d_gauss/datasets/meshes/simulation_assets/tractors/"
+combine_mesh_path = "/home/a/personal/sem7/3d_gauss/datasets/meshes/simulation_assets/combine_harvesters/"
 
 
 
@@ -63,30 +65,85 @@ def spawn_multiple(fname, base_name, n_units):
 
     return spawners
     
-
-
     
+
+def generate_sdf_files(asset_dir, settings):
+    mesh_assets = os.listdir(asset_dir)
+    sdf_paths = []
+    for mesh_asset in mesh_assets:
+        model_name = mesh_asset.split('.')[0]
+        model_type = settings['type']
+        base_sdf = settings['base_sdf']
+        print("creating sim asset")
+        sim_asset = BaseSimAsset(base_sdf, os.path.join(asset_dir, mesh_asset), model_name)
+        move_settings = settings['movement_parameters']
+        sim_asset.set_movement_parameters(min_dist          = move_settings['min_dist'],
+                                          max_dist          = move_settings['max_dist'],
+                                          z_low             = move_settings['z_low'],
+                                          z_high            = move_settings['z_high'],
+                                          roll              = move_settings['roll'],
+                                          pitch             = move_settings['pitch'],
+                                          yaw               = move_settings['yaw'],
+                                          appearance_p      = move_settings['appearance_p'],
+                                          distance_to_other = move_settings['distance_to_other'])
+        
+        sim_asset.set_label(settings['label'])
+        
+        scale = np.random.uniform(settings['low_scale'], settings['upper_scale'])
+        settings['individual_scales']['model_name'] = scale
+        
+        sim_asset.set_scale(scale)
+
+        sim_asset.save_to_dir("/tmp/")
+
+        sdf_paths.append(sim_asset.get_save_location())
+
+    return sdf_paths 
+
+def generate_spawners(sdf_paths, coppies):
+    spawners = []
+    for sdf_path in sdf_paths:
+        base_name = xmlET.parse(sdf_path).getroot().find(".//model").attrib["name"]
+        spawners = spawners + spawn_multiple(sdf_path, base_name, coppies)
+
+    return spawners
+
 def generate_launch_description():
+    lidar_sim_dir = get_package_share_directory("lidar_sim")
+    pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    data_recorder_dir = get_package_share_directory("data_recorder")
     try:
-        os.mkdir(dataset_global_path + "/labels")
-        os.mkdir(dataset_global_path + "/points")
+        os.makedirs(dataset_global_path + "/labels")
+        os.makedirs(dataset_global_path + "/points")
     except Exception as e:
         print(f"got exception when trying to make folders for dataset {e}")
 
-    config_dict = {'selected_targets':selected_targets,
+
+    with open(os.path.join(lidar_sim_dir, "configs", "ground_config.json"), "r") as f:
+        ground_settings = json.load(f)    
+    with open(os.path.join(lidar_sim_dir, "configs", "tractor_config.json"), "r") as f:
+        tractor_settings = json.load(f)    
+    with open(os.path.join(lidar_sim_dir, "configs", "combine_harvester_config.json"), "r") as f:
+        combine_harvester_settings = json.load(f)    
+
+    ground_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "ground_slice_base.sdf")
+    tractor_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "tractor_base.sdf")
+    combine_harvester_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "combine_base.sdf")
+
+    all_settings = {"ground_settings":ground_settings,
+                    "tractor_settings":tractor_settings,
+                    "combine_harvester_settings":combine_harvester_settings}
+
+    config_dict = {'settings':all_settings,
                    'target_copies':target_copies,
                    'dataset_size':dataset_size,
                    'lidar_type':lidar_type,
                    'label_dict':label_dict}
+
     with open(dataset_global_path+"/info.json", "w") as outfile:
         json.dump(config_dict, outfile)
         
 
-
-    lidar_sim_dir = get_package_share_directory("lidar_sim")
-    pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    data_recorder_dir = get_package_share_directory("data_recorder")
-    
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
@@ -113,12 +170,20 @@ def generate_launch_description():
 
     
     ### spawn targets ###
-    target_spawners = []
-    targets_sdf_path = os.path.join(lidar_sim_dir, "models", "targets")
+    spawners = []
     
-    for target in selected_targets:
-        target_spawners = target_spawners + spawn_multiple(os.path.join(targets_sdf_path,target+".sdf"), target, target_copies)
-    
+    ground_sdf_paths = generate_sdf_files(ground_mesh_path, ground_settings)
+    print("ground sdfs generated")
+    tractor_sdf_paths = generate_sdf_files(tractor_mesh_path, tractor_settings)
+    print("tractor sdfs generated")
+    combine_harvester_sdf_paths = generate_sdf_files(combine_mesh_path, combine_harvester_settings)
+    print("combine sdfs generated")
+
+    print("---------sdf files generated----------")
+
+    spawners += generate_spawners(ground_sdf_paths, 2)
+    spawners += generate_spawners(combine_harvester_sdf_paths, 3)
+    spawners += generate_spawners(tractor_sdf_paths, 2)
 
 
     ### lidar visiulization stuff ###
@@ -153,5 +218,5 @@ def generate_launch_description():
 
 
 
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, dataset_recorder] + target_spawners)
+    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, dataset_recorder] + spawners)
 

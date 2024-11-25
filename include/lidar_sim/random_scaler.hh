@@ -1,21 +1,29 @@
-#ifndef LIDAR_SIM__JOINT_RANDOM_MOVER_HH_
-#define LIDAR_SIM__JOINT_RANDOM_MOVER_HH_
+#ifndef LIDAR_SIM__RANDOM_SCALER_HH_
+#define LIDAR_SIM__RANDOM_SCALER_HH_
 
 // The only required include in the header is this one.
 // All others will depend on what your plugin does.
-#include <algorithm>
 #include <gz/math/Pose3.hh>
 #include <gz/sim/System.hh>
 #include <memory>
-#include <vector>
+
+
+#include <gz/math/Vector3.hh>
+
+namespace custom_components
+{
+    struct ScaleTag {}; // Unique identifier for the Scale component
+    using Scale = gz::sim::components::Component<gz::math::Vector3d, ScaleTag>;
+}
+
 
 namespace lidar_sim
 {
 
-class JointRandomMoverPrivate;
+class RandomScalerPrivate;
 
 
-class JointRandomMover:
+class RandomScaler:
   // This class is a system.
   public gz::sim::System,
   // This class also implements the ISystemPreUpdate, ISystemUpdate,
@@ -23,8 +31,8 @@ class JointRandomMover:
   public gz::sim::ISystemConfigure,
   public gz::sim::ISystemPreUpdate
 {
-  public: JointRandomMover();
-  public: ~JointRandomMover() override;
+  public: RandomScaler();
+  public: ~RandomScaler() override;
 
   public: void Configure(const gz::sim::Entity &_entity,
                          const std::shared_ptr<const sdf::Element> &_sdf,
@@ -33,7 +41,7 @@ class JointRandomMover:
 
   public: void PreUpdate(const gz::sim::UpdateInfo &_info,
                          gz::sim::EntityComponentManager &_ecm) override;
-  private: std::unique_ptr<JointRandomMoverPrivate> data_ptr; 
+  private: std::unique_ptr<RandomScalerPrivate> data_ptr; 
 };
 
 
