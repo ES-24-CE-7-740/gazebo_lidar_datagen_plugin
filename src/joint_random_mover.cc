@@ -35,7 +35,7 @@
 namespace lidar_sim {
 
 class JointRandomMoverPrivate{
-  public: std::vector<gz::sim::Entity> joint_entities;
+public: std::vector<gz::sim::Entity> joint_entities;
   public: std::vector<std::vector<std::string>> joint_names;
   public: std::vector<std::string> joint_move_groups;
   public: std::set<std::string> move_groups_set;
@@ -85,7 +85,7 @@ void JointRandomMover::Configure(const gz::sim::Entity &_entity,
   if (joint_name_vec_g.empty())
   {
     ignerr << "Failed to get any <joint_name>." << std::endl;
-    return;
+return;
   }
 
   this->data_ptr->joint_names.push_back(joint_name_vec_g);
@@ -109,7 +109,7 @@ void JointRandomMover::Configure(const gz::sim::Entity &_entity,
     return;
   }
 
-  ignition::gazebo::Entity test_joint = this->data_ptr->model.JointByName(_ecm, "right_wheel_joint");
+  // ignition::gazebo::Entity test_joint = this->data_ptr->model.JointByName(_ecm, "right_wheel_joint");
   
   // test_joint.ResetPosiont(_ecm, 0.5);
   
@@ -159,6 +159,8 @@ void JointRandomMover::PreUpdate(const gz::sim::UpdateInfo &_info,
 
 
 }
+
+
 IGNITION_ADD_PLUGIN(
   lidar_sim::JointRandomMover,
   gz::sim::System,

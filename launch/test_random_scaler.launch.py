@@ -6,7 +6,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.descriptions import executable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
- 
+
 from launch_ros.actions import Node
 
 import xml.etree.ElementTree as xmlET
@@ -16,7 +16,7 @@ import numpy as np
 
 
 def spawn_multiple(fname, base_name, n_units):
-    tree= xmlET.parse(fname)
+    tree = xmlET.parse(fname)
     root = tree.getroot()
     model = root.find(".//model")
     
@@ -58,7 +58,7 @@ def generate_launch_description():
                                arguments=['-name', lidar_model, '-file', lidar_sdf_path],
                        output='screen')
 
-    fendt_sdf_path = os.path.join(lidar_sim_dir,"models","fendt.sdf")
+    fendt_sdf_path = os.path.join(lidar_sim_dir,"models","random_scaler_test.sdf")
 
 
     spawn_fendt = Node(package='ros_gz_sim',                       
@@ -68,13 +68,15 @@ def generate_launch_description():
                                output='screen')
 
 
-    target_spawners = []
+    # target_spawners = []
+    #
+    # targets_sdf_paths = os.path.join(lidar_sim_dir, "models", "ground")
+    #
+    # for target_sdf_path in os.listdir(targets_sdf_paths):
+    #     target_spawners = target_spawners + spawn_multiple(os.path.join(targets_sdf_paths,target_sdf_path), target_sdf_path.split(".")[0], 1)
+    # 
+    # 
 
-    targets_sdf_paths = os.path.join(lidar_sim_dir, "models", "targets")
-
-    for target_sdf_path in os.listdir(targets_sdf_paths):
-        target_spawners = target_spawners + spawn_multiple(os.path.join(targets_sdf_paths,target_sdf_path), target_sdf_path.split(".")[0], 2)
-    
 
 
     lidar_bridge = Node(package='ros_gz_bridge',
@@ -99,7 +101,11 @@ def generate_launch_description():
                                   "world",
                                   lidar_model+"/lidar_link/gpu_lidar" 
                                 ])
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform] + target_spawners)
+    return LaunchDescription([gz_sim, 
+                              spawn_fendt,
+                              # spawn_lidar, 
+                              # lidar_bridge, 
+                              lidar_static_transform])
 
 
 if __name__ == "__main__":

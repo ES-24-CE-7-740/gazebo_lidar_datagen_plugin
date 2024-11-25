@@ -37,6 +37,8 @@ add_library(random_mover SHARED src/random_mover.cc)
 
 add_library(joint_random_mover SHARED src/joint_random_mover.cc)
 
+# add_library(random_scaler SHARED src/random_scaler.cc)
+
 target_include_directories(
   random_mover PRIVATE include
 )
@@ -44,36 +46,51 @@ target_include_directories(
 target_include_directories(
   joint_random_mover PRIVATE include
 )
+
+# target_include_directories(
+#   random_scaler PRIVATE include
+# )
+
 set_property(TARGET random_mover joint_random_mover PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(random_mover 
   ignition-plugin${IGN_PLUGIN_VER}::ignition-plugin${IGN_PLUGIN_VER}
   ignition-common${IGN_COMMON_VER}::ignition-common${IGN_COMMON_VER}
-  ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER})
-
+  ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER}
+)
 
 target_link_libraries(joint_random_mover 
   ignition-plugin${IGN_PLUGIN_VER}::ignition-plugin${IGN_PLUGIN_VER}
   ignition-common${IGN_COMMON_VER}::ignition-common${IGN_COMMON_VER}
-  ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER})
+  ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER}
+)
+
+# target_link_libraries(random_scaler
+#   ignition-plugin${IGN_PLUGIN_VER}::ignition-plugin${IGN_PLUGIN_VER}
+#   ignition-common${IGN_COMMON_VER}::ignition-common${IGN_COMMON_VER}
+#   ignition-gazebo${GZ_SIM_VER}::ignition-gazebo${GZ_SIM_VER}
+# )
+
 install(
-  TARGETS random_mover joint_random_mover
+  TARGETS random_mover joint_random_mover #random_scaler
   DESTINATION $ENV{HOME}/.ignition/gazebo/plugins
 )
 
 
-
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
-
-# add the little helper resourses to the share dir 
 install(DIRECTORY 
   models
   DESTINATION share/${PROJECT_NAME})
 
 install(DIRECTORY 
   launch 
+  DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY
+  lidar_sim
+  DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY
+  configs
   DESTINATION share/${PROJECT_NAME})
 
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env_hooks/ign_hooks.dsv.in")

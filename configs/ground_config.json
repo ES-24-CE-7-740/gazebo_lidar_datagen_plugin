@@ -1,0 +1,19 @@
+{
+  "type": "ground",
+  "base_sdf": "/to/be/configured/base.sdf",
+  "movement_parameters": {
+    "min_dist": 5.0,
+    "max_dist": 30.0,
+    "z_low": 0.0,
+    "z_high": 0.1,
+    "roll": 0.1,
+    "pitch": 0.1,
+    "yaw": 6.2831853,
+    "appearance_p": 0.8,
+    "distance_to_other": 2.0
+  },
+  "label": "0",
+  "low_scale": 1.8,
+  "upper_scale": 2.2,
+  "individual_scales": {}
+}

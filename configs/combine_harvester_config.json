@@ -1,0 +1,19 @@
+{
+  "type": "combine_harvester",
+  "base_sdf": "/to/be/configured/base.sdf",
+  "movement_parameters": {
+    "min_dist": 5.0,
+    "max_dist": 30.0,
+    "z_low": 0.0,
+    "z_high": 0.1,
+    "roll": 0.1,
+    "pitch": 0.1,
+    "yaw": 6.2831853,
+    "appearance_p": 0.8,
+    "distance_to_other": 5.0
+  },
+  "label": "2",
+  "low_scale": 0.8,
+  "upper_scale": 1.2,
+  "individual_scales": {}
+}

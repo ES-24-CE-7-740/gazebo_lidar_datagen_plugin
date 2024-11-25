@@ -141,7 +141,7 @@ std::vector<gz::math::Pose3d> RandomMover::generate_random_target_poses() {
         }
       }
       igndbg<<"closest_distance_to_other "<<closest_distance_to_other<<std::endl;
-      if (closest_distance_to_other < 7){
+      if (closest_distance_to_other < this->data_ptr->min_dist){
         random_pose = generate_random_pose();
         igndbg<<"target not clear"<<std::endl;
         igndbg<<closest_distance_to_other<<std::endl;
@@ -262,6 +262,7 @@ void RandomMover::Configure(const gz::sim::Entity &_entity,
   double min_dist = 5.0; // Default value
   if (_sdf->HasElement("min_dist"))
     min_dist = _sdf->Get<double>("min_dist");
+    ignmsg << "min dist set to "<<min_dist<<std::endl;
   this->data_ptr->min_dist = min_dist;
 
   
@@ -283,48 +284,49 @@ void RandomMover::Update(const gz::sim::UpdateInfo &_info,
     return;
   }
 
-  std::string move_group = this->data_ptr->move_group;
+    std::string move_group = this->data_ptr->move_group;
 
-  auto target_poses_vec = generate_random_target_poses();
+    auto target_poses_vec = generate_random_target_poses();
 
 
-  gz::sim::Entity model_entity = gz::sim::kNullEntity; 
+    gz::sim::Entity model_entity = gz::sim::kNullEntity; 
 
-  _ecm.Each<gz::sim::components::Name>(
-    [&](const gz::sim::Entity &_entity, const gz::sim::components::Name *_name) -> bool {
-      // igndbg << gz::sim::Model(_entity).Name(_ecm) << std::endl;
-      if (this->data_ptr->model_name == _name->Data()){
-        if (move_group == "tracker"){
-          igndbg << _name->Data() << std::endl;
-          model_entity = _entity;
-          auto model = gz::sim::Model(model_entity);
-          model.SetWorldPoseCmd(_ecm,generate_random_tracker_pose(0.7, 2, 0.1, 0.1));
+    _ecm.Each<gz::sim::components::Name>(
+      [&](const gz::sim::Entity &_entity, const gz::sim::components::Name *_name) -> bool {
+        // igndbg << gz::sim::Model(_entity).Name(_ecm) << std::endl;
+        if (this->data_ptr->model_name == _name->Data()){
+          if (move_group == "tracker"){
+            igndbg << _name->Data() << std::endl;
+            model_entity = _entity;
+            auto model = gz::sim::Model(model_entity);
+            model.SetWorldPoseCmd(_ecm,generate_random_tracker_pose(0.7, 2, 0.1, 0.1));
 
-        }
-        else if (move_group == "target") {
-          igndbg << _name->Data() << std::endl;
-          model_entity = _entity;
-          auto model = gz::sim::Model(model_entity);
-          
-          if (!target_poses_vec.empty()) {
-            auto pose = target_poses_vec.back();
-            target_poses_vec.pop_back();
-            model.SetWorldPoseCmd(_ecm, pose);
-          } else {
-            igndbg << "target_poses_vec is empty; cannot pop back!" << std::endl;
           }
-        }
-        else if (move_group == "ground") {
-          igndbg << _name->Data() << std::endl;
-          model_entity = _entity;
-          auto model = gz::sim::Model(model_entity);
-          
-          if (!target_poses_vec.empty()) {
-            auto pose = target_poses_vec.back();
-            target_poses_vec.pop_back();
-            model.SetWorldPoseCmd(_ecm, pose);
-          } else {
-            igndbg << "target_poses_vec is empty; cannot pop back!" << std::endl;
+          else if (move_group == "target") {
+            igndbg << _name->Data() << std::endl;
+            model_entity = _entity;
+            auto model = gz::sim::Model(model_entity);
+            
+            if (!target_poses_vec.empty()) {
+              auto pose = target_poses_vec.back();
+              target_poses_vec.pop_back();
+              model.SetWorldPoseCmd(_ecm, pose);
+            } else {
+              igndbg << "target_poses_vec is empty; cannot pop back!" << std::endl;
+            }
+          }
+          else if (move_group == "ground") {
+            igndbg << _name->Data() << std::endl;
+            model_entity = _entity;
+            auto model = gz::sim::Model(model_entity);
+            
+            if (!target_poses_vec.empty()) {
+              auto pose = target_poses_vec.back();
+              target_poses_vec.pop_back();
+              model.SetWorldPoseCmd(_ecm, pose);
+            } else {
+              igndbg << "target_poses_vec is empty; cannot pop back!" << std::endl;
+            }
           }
         }
         // else {
@@ -340,9 +342,9 @@ void RandomMover::Update(const gz::sim::UpdateInfo &_info,
         //     igndbg << "target_poses_vec is empty; cannot pop back!" << std::endl;
         //   }
         // }
-      }
+      
       return true;
-    }
+      }
   );
 
 
