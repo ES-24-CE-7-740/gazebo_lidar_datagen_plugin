@@ -12,12 +12,12 @@ endif()
 #ros 2
 find_package(ament_cmake REQUIRED)
 find_package(ros_gz_sim REQUIRED)
-find_package(rviz2 REQUIRED)
+# find_package(rviz2 REQUIRED)
 find_package(ros_gz_bridge REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
-find_package(control_msgs REQUIRED)
+# find_package(control_msgs REQUIRED)
 find_package(rclcpp_action REQUIRED)
 
 # gazebo 
@@ -92,7 +92,9 @@ install(DIRECTORY
 install(DIRECTORY
   configs
   DESTINATION share/${PROJECT_NAME})
-
+install(DIRECTORY
+  rviz
+  DESTINATION share/${PROJECT_NAME})
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env_hooks/ign_hooks.dsv.in")
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env_hooks/ign_hooks.sh.in")
 

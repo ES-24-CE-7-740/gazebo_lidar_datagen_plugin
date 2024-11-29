@@ -16,6 +16,7 @@ import numpy as np
 import json
 
 from base_objects import BaseSimAsset
+from lidar_settings import BaseLidarSettings
 
 
 #########################################################
@@ -26,12 +27,12 @@ from base_objects import BaseSimAsset
 
 target_copies = 1
 
-dataset_size = 100
+dataset_size = 5000
 
 # must have matching sdf file
-lidar_type = "ouster_os1"
+lidar_type = "ouster_os0"
 
-dataset_global_path = "/tmp/00"
+dataset_global_path = "/ws/dataset_output/"
 
 # this might be usefull later
 label_dict = {'0':'ground',
@@ -39,11 +40,11 @@ label_dict = {'0':'ground',
               '2':'combine_harvester'}
 
 
-ground_mesh_path = "/home/a/personal/sem7/3d_gauss/datasets/meshes/simulation_assets/ground_slices/"
-tractor_mesh_path = "/home/a/personal/sem7/3d_gauss/datasets/meshes/simulation_assets/tractors/"
-combine_mesh_path = "/home/a/personal/sem7/3d_gauss/datasets/meshes/simulation_assets/combine_harvesters/"
+ground_mesh_path = "/simulation_assets/ground_slices/"
+tractor_mesh_path = "/simulation_assets/tractors/"
+combine_mesh_path = "/simulation_assets/combine_harvesters/"
 
-
+    
 
 def spawn_multiple(fname, base_name, n_units):
     tree = xmlET.parse(fname)
@@ -100,6 +101,47 @@ def generate_sdf_files(asset_dir, settings):
 
     return sdf_paths 
 
+def generate_lidar_sdf_file(settings):
+    sdf_paths = []
+    model_name = settings['name']
+    base_sdf = settings['base_sdf']
+    print("creating sim asset")
+    lidar_asset = BaseLidarSettings(base_sdf, model_name)
+
+    range_settings = settings['range']
+    lidar_asset._set_range(range_settings['min'], range_settings['max'])
+
+    noise_settings = settings['noise']
+    lidar_asset._set_noise(noise_settings['mean'], noise_settings['stddev'])
+
+    scan_fov_settings = settings['scan_fov']
+    lidar_asset._set_scan_fov(scan_fov_settings['horizontal_samples'],
+                              scan_fov_settings['horizontal_min_angle'],
+                              scan_fov_settings['horizontal_max_angle'],
+                              scan_fov_settings['vertical_samples'],
+                              scan_fov_settings['vertical_min_angle'],
+                              scan_fov_settings['vertical_max_angle']
+                              )
+
+    move_settings = settings['movement_parameters']
+    lidar_asset.set_movement_parameters(min_dist          = move_settings['min_dist'],
+                                        max_dist          = move_settings['max_dist'],
+                                        z_low             = move_settings['z_low'],
+                                        z_high            = move_settings['z_high'],
+                                        roll              = move_settings['roll'],
+                                        pitch             = move_settings['pitch'],
+                                        yaw               = move_settings['yaw'],
+                                        appearance_p      = move_settings['appearance_p'],
+                                        distance_to_other = move_settings['distance_to_other'])
+    
+    
+
+    lidar_asset.save_to_dir("/tmp/")
+
+    sdf_paths.append(lidar_asset.get_save_location())
+
+    return sdf_paths
+
 def generate_spawners(sdf_paths, coppies):
     spawners = []
     for sdf_path in sdf_paths:
@@ -125,14 +167,18 @@ def generate_launch_description():
         tractor_settings = json.load(f)    
     with open(os.path.join(lidar_sim_dir, "configs", "combine_harvester_config.json"), "r") as f:
         combine_harvester_settings = json.load(f)    
+    with open(os.path.join(lidar_sim_dir, "configs", "lidar_settings.json"), "r") as f:
+        lidar_settings = json.load(f)
 
     ground_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "ground_slice_base.sdf")
     tractor_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "tractor_base.sdf")
     combine_harvester_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "combine_base.sdf")
+    lidar_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "lidar_settings.sdf")
 
     all_settings = {"ground_settings":ground_settings,
                     "tractor_settings":tractor_settings,
-                    "combine_harvester_settings":combine_harvester_settings}
+                    "combine_harvester_settings":combine_harvester_settings,
+                    "lidar_settings":lidar_settings}
 
     config_dict = {'settings':all_settings,
                    'target_copies':target_copies,
@@ -149,12 +195,12 @@ def generate_launch_description():
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ), 
         # set it to use the empty world specified in the pgk 
-        launch_arguments={'gz_args': os.path.join(lidar_sim_dir, 'models', 'empty_world.sdf') + ' -v 1' ' --headless-rendering' + ' -r'}.items(),)
+        launch_arguments={'gz_args': os.path.join(lidar_sim_dir, 'models', 'empty_world.sdf') + ' -v 3' ' --headless-rendering' + ' -r' + ' --render-engine ogre2'}.items(),)
 
 
 
     ### spawn lidar ###
-    lidar_sdf_path = os.path.join(lidar_sim_dir,"models",f"{lidar_type}.sdf")
+    lidar_sdf_path = generate_lidar_sdf_file(lidar_settings)
     spawn_lidar = Node(package='ros_gz_sim',
                                executable='create',
                                name='spawn_lidar',
@@ -181,9 +227,9 @@ def generate_launch_description():
 
     print("---------sdf files generated----------")
 
-    spawners += generate_spawners(ground_sdf_paths, 2)
-    spawners += generate_spawners(combine_harvester_sdf_paths, 3)
-    spawners += generate_spawners(tractor_sdf_paths, 2)
+    spawners += generate_spawners(ground_sdf_paths, 3)
+    spawners += generate_spawners(combine_harvester_sdf_paths, 1)
+    spawners += generate_spawners(tractor_sdf_paths, 1)
 
 
     ### lidar visiulization stuff ###
@@ -201,7 +247,14 @@ def generate_launch_description():
                                   lidar_type+"/lidar_link/gpu_lidar" 
                                   ])
 
-    # make rviz here! 
+    # make rviz here!
+    rviz =Node(
+            package='rviz2',
+            namespace='',
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d', [os.path.join(lidar_sim_dir, 'rviz', 'default.rviz')]]
+        )
 
     ### dataset recorder ### 
     dataset_recorder = Node(
@@ -218,5 +271,5 @@ def generate_launch_description():
 
 
 
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, dataset_recorder] + spawners)
+    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, dataset_recorder, rviz] + spawners)
 

@@ -2,14 +2,14 @@
   "type": "tractor",
   "base_sdf": "/to/be/configured/base.sdf",
   "movement_parameters": {
-    "min_dist": 5.0,
+    "min_dist": 7.0,
     "max_dist": 30.0,
-    "z_low": 0.0,
+    "z_low": -0.1,
     "z_high": 0.1,
     "roll": 0.1,
     "pitch": 0.1,
     "yaw": 6.2831853,
-    "appearance_p": 0.8,
+    "appearance_p": 0.5,
     "distance_to_other": 5.0
   },
   "label": "1",

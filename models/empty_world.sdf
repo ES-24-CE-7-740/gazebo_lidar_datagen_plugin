@@ -69,22 +69,22 @@
           </material>
         </visual>
       </link>
-      <link name="scene_link">
-        <visual name="scene_visual">
-          <laser_retro>0</laser_retro>
-          <geometry>
-            <mesh>
-              <uri>models://meshes/ground_mesh2.dae</uri>
-              <scale> 1 1 2 </scale>
-            </mesh>
-          </geometry>
-          <material>
-            <ambient>0.8 0.8 0.8 1</ambient>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
-            <specular>0.8 0.8 0.8 1</specular>
-          </material>
-        </visual>
-      </link>
+      <!-- <link name="scene_link"> -->
+      <!--   <visual name="scene_visual"> -->
+      <!--     <laser_retro>0</laser_retro> -->
+      <!--     <geometry> -->
+      <!--       <mesh> -->
+      <!--         <uri>models://meshes/ground_mesh2.dae</uri> -->
+      <!--         <scale> 1 1 2 </scale> -->
+      <!--       </mesh> -->
+      <!--     </geometry> -->
+      <!--     <material> -->
+      <!--       <ambient>0.8 0.8 0.8 1</ambient> -->
+      <!--       <diffuse>0.8 0.8 0.8 1</diffuse> -->
+      <!--       <specular>0.8 0.8 0.8 1</specular> -->
+      <!--     </material> -->
+      <!--   </visual> -->
+      <!-- </link> -->
     </model>
   </world>
 </sdf>

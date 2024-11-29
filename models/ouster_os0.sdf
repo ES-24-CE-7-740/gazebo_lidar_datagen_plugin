@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="os1_lidar" canonical_link="base">
+    <static> true </static>
+    <link name="base">
+      <pose>  0 0 0 0 0 0 </pose>
+    </link>
+    <link name="lidar_link">
+     <visual name="lidar_visual">
+       <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.10</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1.0 0.0 0.0 1</ambient>
+          <diffuse>1.0 0.0 0.0 1</diffuse>
+          <specular>1.0 0.0 0.0 1</specular>
+        </material>
+      </visual>
+      <pose relative_to="base"> 0 0 1 0 0 0 </pose>
+      <frame name="lidar_frame" attached_to="base">
+        <pose> 0 0 0 0 0 0 </pose>
+      </frame>
+      <sensor name="gpu_lidar" type="gpu_lidar">
+        <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
+        <topic>scan</topic>
+        <update_rate>300</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1032</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>6.2831</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>128</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.61</min_angle>
+              <max_angle>0.61</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>30.0</max>
+            <resolution>1</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        </sensor>
+
+
+      </link>
+      <plugin 
+        filename="librandom_mover.so"
+        name="lidar_sim::random_mover">
+        <move_group>tracker</move_group>
+        <range>0 1</range>
+        <z_range>3 6</z_range>
+        <roll_range>-0.21 0.21</roll_range>
+        <pitch_range>-0.21 0.21</pitch_range>
+        <yaw_range>0 6.28</yaw_range>
+        <appearance_p>1.0</appearance_p>
+        <min_dist>5</min_dist>
+      </plugin>
+  </model>
+</sdf>
