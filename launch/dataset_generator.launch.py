@@ -173,7 +173,7 @@ def generate_launch_description():
     ground_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "ground_slice_base.sdf")
     tractor_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "tractor_base.sdf")
     combine_harvester_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "combine_base.sdf")
-    lidar_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "lidar_settings.sdf")
+    lidar_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "lidar_base.sdf")
 
     all_settings = {"ground_settings":ground_settings,
                     "tractor_settings":tractor_settings,
