@@ -101,10 +101,14 @@ def generate_sdf_files(asset_dir, settings):
                                           yaw               = move_settings['yaw'],
                                           appearance_p      = move_settings['appearance_p'],
                                           distance_to_other = move_settings['distance_to_other'])
+        model_label_found = False
         for key in name_to_label_dict.keys():
+            # print(f"testing if key {key} is in {model_name}  ")
             if key in model_name:
+                print(f"key {key} is in {model_name}  ")
                 sim_asset.set_label(name_to_label_dict[key])
-            else:
+                model_label_found = True 
+            elif not model_label_found:
                 print("no model name matched to name label key")
                 sim_asset.set_label(settings['label'])
         
@@ -292,3 +296,4 @@ def generate_launch_description():
 
     return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, dataset_recorder, rviz] + spawners)
 
+    # return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, dataset_recorder, rviz])
