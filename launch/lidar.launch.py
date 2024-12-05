@@ -48,7 +48,7 @@ def generate_launch_description():
         # set it to use the empty world specified in the pgk 
         launch_arguments={'gz_args': os.path.join(lidar_sim_dir, 'models', 'empty_world.sdf') + ' -v 4' ' --headless-rendering' + ' -r'}.items(),)
 
-    lidar_model = "ouster_os1"
+    lidar_model = "lidar_on_mount"
     lidar_sdf_path = os.path.join(lidar_sim_dir,"models",f"{lidar_model}.sdf")
     
 
@@ -98,8 +98,16 @@ def generate_launch_description():
                                   '0',                 
                                   "world",
                                   lidar_model+"/lidar_link/gpu_lidar" 
-                                ])
-    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform] + target_spawners)
+                                  ])
+    rviz =Node(
+            package='rviz2',
+            namespace='',
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d', [os.path.join(lidar_sim_dir, 'rviz', 'default.rviz')]]
+        )
+
+    return LaunchDescription([gz_sim, spawn_lidar, lidar_bridge, lidar_static_transform, rviz])
 
 
 if __name__ == "__main__":

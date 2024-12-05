@@ -2,7 +2,7 @@
   "name": "ouster_os0",
   "base_sdf": "/to/be/configured/base.sdf",
   "range": {
-    "min": 0.5,
+    "min": 5.0,
     "max": 30.0
   },
   "noise": {
@@ -10,7 +10,7 @@
     "stddev": 0.01
   },
   "scan_fov": {
-    "horizontal_samples": 1032,
+    "horizontal_samples": 2064,
     "horizontal_min_angle": 0.0,
     "horizontal_max_angle": 6.2831,
     "vertical_samples": 128,
@@ -18,14 +18,14 @@
     "vertical_max_angle": 0.61
   },
   "movement_parameters": {
-    "min_dist": 7.0,
-    "max_dist": 30.0,
-    "z_low": -0.1,
-    "z_high": 0.1,
-    "roll": 0.1,
-    "pitch": 0.1,
+    "min_dist": 0.0,
+    "max_dist": 2.0,
+    "z_low": -0.2,
+    "z_high": 0.2,
+    "roll": 0.2,
+    "pitch": 0.2,
     "yaw": 6.2831853,
-    "appearance_p": 0.5,
-    "distance_to_other": 5.0
+    "appearance_p": 1,
+    "distance_to_other": 0
   }
 }

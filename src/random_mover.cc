@@ -54,16 +54,16 @@ RandomMover::~RandomMover() {
 }
 
 
-gz::math::Pose3d RandomMover::generate_random_tracker_pose(double min_z, double max_z, double max_roll, double max_pitch) {
-  double x = 0;
-  double y = 0;
-  double z = gz::math::Rand::DblUniform(min_z, max_z);
-  double roll = gz::math::Rand::DblUniform(-max_roll, max_roll); 
-  double pitch = gz::math::Rand::DblUniform(-max_pitch, max_pitch);
-  double yaw = gz::math::Rand::DblUniform(0, 2 *M_PI);
-
-  return gz::math::Pose3d(x, y, z, roll, pitch, yaw);
-} 
+// gz::math::Pose3d RandomMover::generate_random_tracker_pose() {
+//   double x = 0;
+//   double y = 0;
+//   double z = gz::math::Rand::DblUniform(min_z, max_z);
+//   double roll = gz::math::Rand::DblUniform(-max_roll, max_roll); 
+//   double pitch = gz::math::Rand::DblUniform(-max_pitch, max_pitch);
+//   double yaw = gz::math::Rand::DblUniform(0, 2 *M_PI);
+//
+//   return gz::math::Pose3d(x, y, z, roll, pitch, yaw);
+// } 
 
 
 gz::math::Pose3d RandomMover::generate_random_pose(){
@@ -299,7 +299,7 @@ void RandomMover::Update(const gz::sim::UpdateInfo &_info,
             igndbg << _name->Data() << std::endl;
             model_entity = _entity;
             auto model = gz::sim::Model(model_entity);
-            model.SetWorldPoseCmd(_ecm,generate_random_tracker_pose(0.7, 2, 0.1, 0.1));
+            model.SetWorldPoseCmd(_ecm,generate_random_pose());
 
           }
           else if (move_group == "target") {

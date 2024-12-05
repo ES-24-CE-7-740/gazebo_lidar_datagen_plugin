@@ -8,7 +8,7 @@
         <laser_retro>1</laser_retro>
         <geometry>
          <mesh>
-            <uri>models://meshes/fendt.dae</uri>
+            <uri>models://meshes/simplified_fendt.dae</uri>
           <scale>1 1 1</scale>
          </mesh>
        </geometry>

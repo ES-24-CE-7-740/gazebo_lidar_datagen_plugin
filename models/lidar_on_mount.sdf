@@ -1,0 +1,111 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="base_lidar" canonical_link="base">
+    <static> true </static>
+    <link name="base">
+      <pose>  0 0 0 0 0 3.1415 </pose>
+      <visual name="tractor_base">
+        <geometry>
+          <mesh>
+            <uri>models://meshes/simplified_fendt.dae</uri>
+            <scale>1.4 1.4 1.4</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1</ambient>
+          <diffuse>0.1 0.1 0.1</diffuse>
+          <specular>0.1 0.1 0.1</specular>
+        </material>
+      </visual>
+
+    </link>
+    <link name="lidar_link">
+     <pose>0 0 3.2 -0.09979835  0.30793735  0.09979835</pose>
+     <visual name="lidar_visual">
+       <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.10</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1.0 0.0 0.0 1</ambient>
+          <diffuse>1.0 0.0 0.0 1</diffuse>
+          <specular>1.0 0.0 0.0 1</specular>
+        </material>
+      </visual>
+      <pose relative_to="base"> 0 0 0 0 0 0 </pose>
+      <frame name="lidar_frame" attached_to="base">
+        <pose> 0 0 0 0 0 0 </pose>
+      </frame>
+      <sensor name="gpu_lidar" type="gpu_lidar">
+        <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
+        <topic>scan</topic>
+        <update_rate>300</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1032</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>6.2831</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>128</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.61</min_angle>
+              <max_angle>0.61</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>30.0</max>
+            <resolution>1</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        </sensor>
+      </link>
+  
+    <joint name="lidar_joint" type="prismatic">
+      <pose relative_to="base"> 0 0 3.2 -0.09979835  0.30793735  0.09979835</pose>
+      <parent>base</parent>
+      <child>lidar_link</child>
+      <axis>
+        <xyz expesses_in="__model__">0 0 1</xyz>
+        <limit>
+          <lower>-0.1</lower>
+          <upper>0.1</upper>
+        </limit>
+      </axis>
+      <joint_move_group> lidar </joint_move_group>
+    </joint>
+
+
+    <plugin 
+      filename="librandom_mover.so"
+      name="lidar_sim::random_mover">
+      <move_group>tracker</move_group>
+      <range>0 1</range>
+      <z_range>0 0</z_range>
+      <roll_range>-0.21 0.21</roll_range>
+      <pitch_range>-0.21 0.21</pitch_range>
+      <yaw_range>0 6.28</yaw_range>
+      <appearance_p>1.0</appearance_p>
+      <min_dist>5</min_dist>
+    </plugin>
+    <plugin
+      filename="libjoint_random_mover.so"
+      name="lidar_sim::joint_random_mover">
+      <joint_name>lidar_joint</joint_name>
+      <joint_move_group>lidar</joint_move_group>
+    </plugin>
+
+  </model>
+</sdf>
