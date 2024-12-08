@@ -27,7 +27,7 @@ from lidar_settings import BaseLidarSettings
 
 target_copies = 1
 
-dataset_size = 1000
+dataset_size = 10000
 
 # must have matching sdf file
 lidar_type = "ouster_os0"
@@ -209,8 +209,6 @@ def generate_launch_description():
     ### spawn lidar ###
     lidar_sdf_path = generate_lidar_sdf_file(lidar_settings)
     
-    with open(lidar_sdf_path, "r") as f:
-        print(f)
 
     spawn_lidar = Node(package='ros_gz_sim',
                                executable='create',

@@ -7,10 +7,10 @@
   },
   "noise": {
     "mean": 0.0,
-    "stddev": 0.01
+    "stddev": 0.05
   },
   "scan_fov": {
-    "horizontal_samples": 2064,
+    "horizontal_samples": 2048 ,
     "horizontal_min_angle": 0.0,
     "horizontal_max_angle": 6.2831,
     "vertical_samples": 128,

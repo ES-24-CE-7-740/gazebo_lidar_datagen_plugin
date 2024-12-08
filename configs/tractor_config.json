@@ -12,8 +12,8 @@
     "appearance_p": 0.5,
     "distance_to_other": 5.0
   },
-  "label": "1",
-  "low_scale": 0.8,
-  "upper_scale": 1.2,
+  "label": "10",
+  "low_scale": 0.99,
+  "upper_scale": 1.001,
   "individual_scales": {}
 }

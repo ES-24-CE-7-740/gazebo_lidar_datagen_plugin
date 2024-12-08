@@ -35,29 +35,16 @@ lidar_type = "ouster_os0"
 
 dataset_global_path = "/ws/dataset_output/"
 
-# this might be usefull later
-label_dict = {'0':'ground',
-              '1':'tractor',
-              '2':'combine_harvester'}
-
-name_to_label_dict = {'fendt_paralevel':21,
-                      'green_fendt':21,
-                      'ideal_10t':22,
-                      'laverda':23,
-                      'blue_valtra':11,
-                      'deer_krammer':15,
-                      'gray_valtra':11,
-                      'massey':13,
-                      'red_valtra':14,
-                      'simplified_fendt':12,
-                      'valtra_with_forks':14,
-                      'ground':0}
+ground_copies = 3
+tractor_copies = 1
+combine_harvester_copies = 1
+trailer_copies = 1
 
 
 ground_mesh_path = "/simulation_assets/ground_slices/"
 tractor_mesh_path = "/simulation_assets/tractors/"
 combine_mesh_path = "/simulation_assets/combine_harvesters/"
-
+trailer_mesh_path = "/simulation_assets/trailers/"
     
 
 def spawn_multiple(fname, base_name, n_units):
@@ -82,7 +69,7 @@ def spawn_multiple(fname, base_name, n_units):
     
     
 
-def generate_sdf_files(asset_dir, settings):
+def generate_sdf_files(asset_dir, settings, name_to_label_dict):
     mesh_assets = os.listdir(asset_dir)
     sdf_paths = []
     for mesh_asset in mesh_assets:
@@ -103,7 +90,7 @@ def generate_sdf_files(asset_dir, settings):
                                           distance_to_other = move_settings['distance_to_other'])
         model_label_found = False
         for key in name_to_label_dict.keys():
-            # print(f"testing if key {key} is in {model_name}  ")
+            print(f"testing if key {key} is in {model_name}  ")
             if key in model_name:
                 print(f"key {key} is in {model_name}  ")
                 sim_asset.set_label(name_to_label_dict[key])
@@ -181,6 +168,9 @@ def generate_launch_description():
         os.makedirs(dataset_global_path + "/points")
     except Exception as e:
         print(f"got exception when trying to make folders for dataset {e}")
+    
+    with open(os.path.join(lidar_sim_dir, "configs", "model_label_config.json"), "r") as f:
+        name_to_label_dict = json.load(f)["full_label_dict"]    
 
 
     with open(os.path.join(lidar_sim_dir, "configs", "ground_config.json"), "r") as f:
@@ -189,24 +179,35 @@ def generate_launch_description():
         tractor_settings = json.load(f)    
     with open(os.path.join(lidar_sim_dir, "configs", "combine_harvester_config.json"), "r") as f:
         combine_harvester_settings = json.load(f)    
+    
+    with open(os.path.join(lidar_sim_dir, "configs", "trailer_config.json"), "r") as f:
+        trailer_settings = json.load(f)
+
     with open(os.path.join(lidar_sim_dir, "configs", "lidar_settings.json"), "r") as f:
         lidar_settings = json.load(f)
+
+    
 
     ground_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "ground_slice_base.sdf")
     tractor_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "tractor_base.sdf")
     combine_harvester_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "combine_base.sdf")
+    trailer_settings["base_sdf"] = os.path.join(lidar_sim_dir, "models", "trailer_base.sdf")
     lidar_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "lidar_on_mount.sdf")
 
     all_settings = {"ground_settings":ground_settings,
                     "tractor_settings":tractor_settings,
                     "combine_harvester_settings":combine_harvester_settings,
-                    "lidar_settings":lidar_settings}
+                    "trailer_settings":trailer_settings,
+                    "lidar_settings":lidar_settings,
+                    "tractor_copies":tractor_copies,
+                    "ground_copies":ground_copies,
+                    "combine_harvester_copies":combine_harvester_copies,
+                    "trailer_copies":trailer_copies}
 
     config_dict = {'settings':all_settings,
                    'target_copies':target_copies,
                    'dataset_size':dataset_size,
                    'lidar_type':lidar_type,
-                   'label_dict':label_dict,
                    'name_label_dict':name_to_label_dict}
 
     with open(dataset_global_path+"/info.json", "w") as outfile:
@@ -241,19 +242,22 @@ def generate_launch_description():
     ### spawn targets ###
     spawners = []
     
-    ground_sdf_paths = generate_sdf_files(ground_mesh_path, ground_settings)
+    ground_sdf_paths = generate_sdf_files(ground_mesh_path, ground_settings, name_to_label_dict)
     print("ground sdfs generated")
-    tractor_sdf_paths = generate_sdf_files(tractor_mesh_path, tractor_settings)
+    tractor_sdf_paths = generate_sdf_files(tractor_mesh_path, tractor_settings, name_to_label_dict)
     print("tractor sdfs generated")
-    combine_harvester_sdf_paths = generate_sdf_files(combine_mesh_path, combine_harvester_settings)
+    combine_harvester_sdf_paths = generate_sdf_files(combine_mesh_path, combine_harvester_settings, name_to_label_dict)
     print("combine sdfs generated")
+    trailer_sdf_paths = generate_sdf_files(trailer_mesh_path, trailer_settings, name_to_label_dict)
+    print("trailer sdfs generated")
+    
 
     print("---------sdf files generated----------")
 
-    spawners += generate_spawners(ground_sdf_paths, 3)
-    spawners += generate_spawners(combine_harvester_sdf_paths, 1)
-    spawners += generate_spawners(tractor_sdf_paths, 1)
-
+    spawners += generate_spawners(ground_sdf_paths, ground_copies)
+    spawners += generate_spawners(combine_harvester_sdf_paths, combine_harvester_copies)
+    spawners += generate_spawners(tractor_sdf_paths, tractor_copies)
+    spawners += generate_spawners(trailer_sdf_paths, trailer_copies)
 
     ### lidar visiulization stuff ###
     lidar_static_transform = Node(package='tf2_ros',
@@ -287,7 +291,7 @@ def generate_launch_description():
         parameters=[
             {'dataset_size': dataset_size},
             {'dataset_path': dataset_global_path},
-            {'labels': label_dict},
+            {'labels': name_to_label_dict},
         ],
         output="screen"
     )

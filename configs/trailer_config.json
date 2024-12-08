@@ -1,5 +1,5 @@
 {
-  "type": "combine_harvester",
+  "type": "trailer",
   "base_sdf": "/to/be/configured/base.sdf",
   "movement_parameters": {
     "min_dist": 7.0,
@@ -10,10 +10,11 @@
     "pitch": 0.1,
     "yaw": 6.2831853,
     "appearance_p": 0.5,
-    "distance_to_other": 7.0
+    "distance_to_other": 5.0
   },
-  "label": "20",
-  "low_scale": 0.99,
-  "upper_scale": 1.01,
+  "label": "30",
+  "low_scale": 0.8,
+  "upper_scale": 1.2,
   "individual_scales": {}
 }
+

@@ -1,0 +1,85 @@
+{
+  "model_root_dir":"/home/ai/simulator/meshes_ply/",
+  "labels":{
+    "tractors":{
+      "unkown_tractor":10,
+      "blue_valtra":11,
+      "grey_valtra":12,
+      "valtra_with_forks":13,
+      "deer_krammer":14,
+      "massey":15
+    },
+    "combine_harvesters":{
+      "unknown_combine_harvester":20,
+      "fendt_paralevel":21,
+      "ideal_10t":22,
+      "laverda":23
+    },
+    "ground":{
+      "ground":0
+    },
+    "other":{
+      "other":1,
+      "trailer":30
+    }
+  },
+  "full_label_dict":{
+    "unkown_tractor"               :10,
+    "blue_valtra"                  :11,
+    "grey_valtra"                  :12,
+    "valtra_with_forks"            :13,
+    "deer_krammer"                 :14,
+    "massey"                       :15,
+    "unknown_combine_harvester"    :20,
+    "fendt_paralevel"              :21,
+    "ideal_10t"                    :22,
+    "laverda"                      :23,
+    "ground"                       :0,
+    "other"                        :1,
+    "trailer"                      :30
+  },
+  "inverted_label_dict":{
+    "10": "unkown_tractor",
+    "11": "blue_valtra",
+    "12": "grey_valtra",
+    "13": "valtra_with_forks",
+    "14": "deer_krammer",
+    "15": "massey",
+    "20": "unknown_combine_harvester",
+    "21": "fendt_paralevel",
+    "22": "ideal_10t",
+    "23": "laverda",
+    "0": "ground",
+    "1": "other",
+    "30": "trailer"
+  },
+  "training_labels_map":{
+    "0":0,
+    "1":0,
+    "10":1,
+    "11":2,
+    "12":3,
+    "13":4,
+    "14":5,
+    "15":6,
+    "20":7,
+    "21":8,
+    "22":9,
+    "23":10,
+    "30":11
+  },
+  "inverted_training_label_map":{
+    "0": 0,
+    "1": 10,
+    "2": 11,
+    "3": 12,
+    "4": 13,
+    "5": 14,
+    "6": 15,
+    "7": 20,
+    "8": 21,
+    "9": 22,
+    "10": 23,
+    "11": 30
+  }
+}
