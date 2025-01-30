@@ -1,0 +1,19 @@
+{
+  "type": "target",
+  "base_sdf": "/to/be/configured/base.sdf",
+  "movement_parameters": {
+    "min_dist": 25.0,
+    "max_dist": 35.0,
+    "z_low": -0.2,
+    "z_high": 3.1,
+    "roll": 0.1,
+    "pitch": 0.1,
+    "yaw": 6.2831853,
+    "appearance_p": 0.5,
+    "distance_to_other": 7.0
+  },
+  "label": "1",
+  "low_scale": 0.5,
+  "upper_scale": 1.0,
+  "individual_scales": {}
+}

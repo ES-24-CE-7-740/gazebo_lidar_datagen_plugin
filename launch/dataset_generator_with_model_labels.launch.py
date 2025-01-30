@@ -28,7 +28,7 @@ from lidar_settings import BaseLidarSettings
 
 target_copies = 1
 
-dataset_size = 1000
+dataset_size = 100
 
 # must have matching sdf file
 lidar_type = "ouster_os0"
@@ -39,13 +39,15 @@ ground_copies = 3
 tractor_copies = 1
 combine_harvester_copies = 1
 trailer_copies = 1
+other_target_copies = 1
+
 
 
 ground_mesh_path = "/simulation_assets/ground_slices/"
 tractor_mesh_path = "/simulation_assets/tractors/"
 combine_mesh_path = "/simulation_assets/combine_harvesters/"
 trailer_mesh_path = "/simulation_assets/trailers/"
-    
+other_target_mesh_path = "/simulation_assets/other_targets/"    
 
 def spawn_multiple(fname, base_name, n_units):
     tree = xmlET.parse(fname)
@@ -104,7 +106,7 @@ def generate_sdf_files(asset_dir, settings, name_to_label_dict):
         
         sim_asset.set_scale(scale)
 
-        sim_asset.save_to_dir("/tmp/")
+        sim_asset.save_to_dir(dataset_global_path)
 
         sdf_paths.append(sim_asset.get_save_location())
 
@@ -182,6 +184,9 @@ def generate_launch_description():
     
     with open(os.path.join(lidar_sim_dir, "configs", "trailer_config.json"), "r") as f:
         trailer_settings = json.load(f)
+    with open(os.path.join(lidar_sim_dir, "configs", "other_target_config.json"), "r") as f:
+        other_target_setting = json.load(f)
+
 
     with open(os.path.join(lidar_sim_dir, "configs", "lidar_settings.json"), "r") as f:
         lidar_settings = json.load(f)
@@ -192,6 +197,7 @@ def generate_launch_description():
     tractor_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "tractor_base.sdf")
     combine_harvester_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "combine_base.sdf")
     trailer_settings["base_sdf"] = os.path.join(lidar_sim_dir, "models", "trailer_base.sdf")
+    other_target_setting["base_sdf"] = os.path.join(lidar_sim_dir, "models", "other_target_base.sdf")
     lidar_settings['base_sdf'] = os.path.join(lidar_sim_dir, "models", "lidar_on_mount.sdf")
 
     all_settings = {"ground_settings":ground_settings,
@@ -202,7 +208,8 @@ def generate_launch_description():
                     "tractor_copies":tractor_copies,
                     "ground_copies":ground_copies,
                     "combine_harvester_copies":combine_harvester_copies,
-                    "trailer_copies":trailer_copies}
+                    "trailer_copies":trailer_copies,
+                    "other_target_copies":other_target_copies}
 
     config_dict = {'settings':all_settings,
                    'target_copies':target_copies,
@@ -237,6 +244,11 @@ def generate_launch_description():
                         arguments=["/scan/points@sensor_msgs/msg/PointCloud2@ignition.msgs.PointCloudPacked"],
                         output = 'screen')
 
+    # lidar_bridge_vis = Node(package='ros_gz_bridge',
+    #                     executable = 'parameter_bridge',
+    #                     name='scan_bridge2',
+    #                     arguments=["/scan_2/points@sensor_msgs/msg/PointCloud2@ignition.msgs.PointCloudPacked"],
+    #                     output = 'screen')
 
     
     ### spawn targets ###
@@ -250,7 +262,10 @@ def generate_launch_description():
     print("combine sdfs generated")
     trailer_sdf_paths = generate_sdf_files(trailer_mesh_path, trailer_settings, name_to_label_dict)
     print("trailer sdfs generated")
-    
+    other_target_sdf_paths = generate_sdf_files(other_target_mesh_path, other_target_setting, name_to_label_dict)
+    print("other targets sdfs generated")
+
+
 
     print("---------sdf files generated----------")
 
@@ -258,6 +273,7 @@ def generate_launch_description():
     spawners += generate_spawners(combine_harvester_sdf_paths, combine_harvester_copies)
     spawners += generate_spawners(tractor_sdf_paths, tractor_copies)
     spawners += generate_spawners(trailer_sdf_paths, trailer_copies)
+    spawners += generate_spawners(other_target_sdf_paths, other_target_copies)
 
     ### lidar visiulization stuff ###
     lidar_static_transform = Node(package='tf2_ros',

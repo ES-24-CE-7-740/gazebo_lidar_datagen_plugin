@@ -41,7 +41,7 @@
       <sensor name="gpu_lidar" type="gpu_lidar">
         <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
         <topic>scan</topic>
-        <update_rate>300</update_rate>
+        <update_rate>2000</update_rate>
         <ray>
           <scan>
             <horizontal>
@@ -72,6 +72,59 @@
         <visualize>true</visualize>
         </sensor>
       </link>
+    <link name="lidar_link_2">
+     <pose>0 0 3.2 -0.09979835  0.30793735  0.09979835</pose>
+     <visual name="lidar_visual_2">
+       <geometry>
+          <cylinder>
+            <radius>0.10</radius>
+            <length>0.15</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1.0 0.0 0.0 1</ambient>
+          <diffuse>1.0 0.0 0.0 1</diffuse>
+          <specular>1.0 0.0 0.0 1</specular>
+        </material>
+      </visual>
+      <pose relative_to="base"> 0 0 0 0 0 0 </pose>
+      <frame name="lidar_frame_2" attached_to="base">
+        <pose> 0 0 0 0 0 0 </pose>
+      </frame>
+      <sensor name="gpu_lidar_2" type="gpu_lidar">
+        <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
+        <topic>scan2</topic>
+        <update_rate>2000</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>248</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>6.2831</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>28</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.61</min_angle>
+              <max_angle>0.61</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>30.0</max>
+            <resolution>1</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+        </sensor>
+      </link>
   
     <joint name="lidar_joint" type="prismatic">
       <pose relative_to="base"> 0 0 3.2 -0.09979835  0.30793735  0.09979835</pose>
@@ -80,8 +133,8 @@
       <axis>
         <xyz expesses_in="__model__">0 0 1</xyz>
         <limit>
-          <lower>-0.1</lower>
-          <upper>0.1</upper>
+          <lower>-0.00</lower>
+          <upper>0.00</upper>
         </limit>
       </axis>
       <joint_move_group> lidar </joint_move_group>
