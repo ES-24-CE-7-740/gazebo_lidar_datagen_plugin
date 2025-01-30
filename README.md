@@ -2,6 +2,9 @@
 Gazebo Fortress plugin to use gazebo as a lidar sematic segmentation dataset generator. Uses the laser_retro for each mesh to annotate the point clouds. The plugins primary function is to move meshes to random positions according to some rules each simulation tick.
 The simulation assestes are in general split into two, the targets and the tracker (the LiDAR). The LiDAR can be configured in the lidar configuration json file. for the targets there is a configuration file for each target type where the movement parameters can be set. These configuration files are used to create the sdf files which are constructed in the launch file. In the launch file, the type of targets can be configured by appending them to the spawners list. To run the complete simulation envirionment, the simulation assets must be sorted into directories where each directory corresponds to a configuration file.
 
+![](mat/gazebo_lidar.gif)
+
+
 ## use of plugin in sdf
 The plugin can also be used in an sdf file directly by adding it the the model as in the example
 ```
